@@ -46,6 +46,7 @@ import (
 	"github.com/dsnet/golib/jsonfmt"
 	"golang.org/x/crypto/ssh"
 	"golang.org/x/crypto/ssh/knownhosts"
+	. "github.com/eyedeekay/sshtunnel/tunnel"
 )
 
 // Version of the sshtunnel binary. May be set by linker when building.
