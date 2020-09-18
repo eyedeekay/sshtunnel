@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE.md file.
 
-package main
+package sshtunnel
 
 import (
 	"context"
@@ -47,7 +47,7 @@ func (t tunnel) String() string {
 	return fmt.Sprintf("%s@%s | %s %s %s", t.user, t.hostAddr, left, mode, right)
 }
 
-func (t tunnel) bindTunnel(ctx context.Context, wg *sync.WaitGroup) {
+func (t tunnel) BindTunnel(ctx context.Context, wg *sync.WaitGroup) {
 	defer wg.Done()
 
 	for {
@@ -65,7 +65,7 @@ func (t tunnel) bindTunnel(ctx context.Context, wg *sync.WaitGroup) {
 				return
 			}
 			wg.Add(1)
-			go t.keepAliveMonitor(&once, wg, cl)
+			go t.KeepAliveMonitor(&once, wg, cl)
 			defer cl.Close()
 
 			// Attempt to bind to the inbound socket.
@@ -105,7 +105,7 @@ func (t tunnel) bindTunnel(ctx context.Context, wg *sync.WaitGroup) {
 					return
 				}
 				wg.Add(1)
-				go t.dialTunnel(bindCtx, wg, cl, cn1)
+				go t.DialTunnel(bindCtx, wg, cl, cn1)
 			}
 		}()
 
@@ -118,7 +118,7 @@ func (t tunnel) bindTunnel(ctx context.Context, wg *sync.WaitGroup) {
 	}
 }
 
-func (t tunnel) dialTunnel(ctx context.Context, wg *sync.WaitGroup, client *ssh.Client, cn1 net.Conn) {
+func (t tunnel) DialTunnel(ctx context.Context, wg *sync.WaitGroup, client *ssh.Client, cn1 net.Conn) {
 	defer wg.Done()
 
 	// The inbound connection is established. Make sure we close it eventually.
@@ -174,10 +174,10 @@ func (t tunnel) dialTunnel(ctx context.Context, wg *sync.WaitGroup, client *ssh.
 	wg2.Wait()
 }
 
-// keepAliveMonitor periodically sends messages to invoke a response.
+// KeepAliveMonitor periodically sends messages to invoke a response.
 // If the server does not respond after some period of time,
 // assume that the underlying net.Conn abruptly died.
-func (t tunnel) keepAliveMonitor(once *sync.Once, wg *sync.WaitGroup, client *ssh.Client) {
+func (t tunnel) KeepAliveMonitor(once *sync.Once, wg *sync.WaitGroup, client *ssh.Client) {
 	defer wg.Done()
 	if t.keepAlive.Interval == 0 || t.keepAlive.CountMax == 0 {
 		return
