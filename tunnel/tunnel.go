@@ -35,7 +35,7 @@ type Tunnel struct {
 	log logger
 }
 
-func (t tunnel) String() string {
+func (t Tunnel) String() string {
 	var left, right string
 	mode := "<?>"
 	switch t.mode {
@@ -47,7 +47,7 @@ func (t tunnel) String() string {
 	return fmt.Sprintf("%s@%s | %s %s %s", t.user, t.hostAddr, left, mode, right)
 }
 
-func (t tunnel) BindTunnel(ctx context.Context, wg *sync.WaitGroup) {
+func (t Tunnel) BindTunnel(ctx context.Context, wg *sync.WaitGroup) {
 	defer wg.Done()
 
 	for {
@@ -118,7 +118,7 @@ func (t tunnel) BindTunnel(ctx context.Context, wg *sync.WaitGroup) {
 	}
 }
 
-func (t tunnel) DialTunnel(ctx context.Context, wg *sync.WaitGroup, client *ssh.Client, cn1 net.Conn) {
+func (t Tunnel) DialTunnel(ctx context.Context, wg *sync.WaitGroup, client *ssh.Client, cn1 net.Conn) {
 	defer wg.Done()
 
 	// The inbound connection is established. Make sure we close it eventually.
@@ -177,7 +177,7 @@ func (t tunnel) DialTunnel(ctx context.Context, wg *sync.WaitGroup, client *ssh.
 // KeepAliveMonitor periodically sends messages to invoke a response.
 // If the server does not respond after some period of time,
 // assume that the underlying net.Conn abruptly died.
-func (t tunnel) KeepAliveMonitor(once *sync.Once, wg *sync.WaitGroup, client *ssh.Client) {
+func (t Tunnel) KeepAliveMonitor(once *sync.Once, wg *sync.WaitGroup, client *ssh.Client) {
 	defer wg.Done()
 	if t.keepAlive.Interval == 0 || t.keepAlive.CountMax == 0 {
 		return

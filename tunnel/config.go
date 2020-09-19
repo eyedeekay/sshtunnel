@@ -111,7 +111,7 @@ type KeepAliveConfig struct {
 	CountMax uint
 }
 
-func LoadConfig(conf string) (tunns []tunnel, logger *log.Logger, closer func() error) {
+func LoadConfig(conf string) (tunns []Tunnel, logger *log.Logger, closer func() error) {
 	var logBuf bytes.Buffer
 	logger = log.New(io.MultiWriter(os.Stderr, &logBuf), "", log.Ldate|log.Ltime|log.Lshortfile)
 
@@ -195,7 +195,7 @@ func LoadConfig(conf string) (tunns []tunnel, logger *log.Logger, closer func() 
 
 	// Parse all of the tunnels.
 	for _, t := range config.Tunnels {
-		var tunn tunnel
+		var tunn Tunnel
 		tt := strings.Fields(t.Tunnel)
 		if len(tt) != 3 {
 			logger.Fatalf("invalid tunnel syntax: %s", t.Tunnel)
