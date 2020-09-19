@@ -20,7 +20,7 @@ type logger interface {
 	Printf(string, ...interface{})
 }
 
-type tunnel struct {
+type Tunnel struct {
 	auth     []ssh.AuthMethod
 	hostKeys ssh.HostKeyCallback
 	mode     byte // '>' for forward, '<' for reverse
